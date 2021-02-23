@@ -2,16 +2,16 @@ from typing import Dict, Any
 
 print("Welcome to the app. Please log in:")
 
-oddelovac = 20 * "-"
+ODDELOVAC = 20 * "-"
 masterdata = {"bob": "123", "ann": "pass123", "mike": "password123", "liz": "pass123"}
 count = 0
 
 # doplnit aby se to převedlo na malá písmena
 
-while count < 3:
+while count<3:
     username = input('Enter username: ')
 
-    if username in masterdata:
+    if username.lower() in masterdata:
         password = input("Password: ")
         break
 
@@ -25,9 +25,9 @@ while count < 3:
             count += 1
 
 print()
-print(oddelovac)
+print(ODDELOVAC)
 
-if masterdata.get(username) == password:
+if masterdata.get(username.lower()) == password:
     print("We have 3 texts to be analyzed")
 else:
     password = input("Password again, the one you entered before did not work, you have 2 attempts to go: ")
@@ -42,7 +42,7 @@ else:
             print("Sorry, you did not manage to enter correct password, you PC will burst in flames in 3...2...1...")
             exit()
 
-print(oddelovac)
+print(ODDELOVAC)
 
 TEXTS = [
     "Situated BB about 10 miles west of Kemmerer, Fossil Butte is a ruggedly impressive topographic feature that rises sharply some 1000 feet above Twin Creek Valley to an elevation of more than 7500 feet above sea level. The butte is located just north of US 30N and the Union Pacific Railroad, traphic traverse the valley. ",
@@ -53,45 +53,33 @@ TEXTS = [
 
 text_number = int(input("Enter a number btw. 1 and 3 to select: "))-1
 
+
 if text_number in range(0,4) :
-    print(oddelovac)
+    print(ODDELOVAC)
 else:
+    print("You chose wrong number, the number must be between 1 - 3, start the program again")
     exit()
 
 
-# pocet slov - word count, string splintnutý mezerou
-chosen_text = TEXTS[int(text_number)].split(" ")
-chosen_text_modif=[]
-
-for slovo in chosen_text:
-    chosen_text_modif.append(slovo.strip(".,"))
+chosen_text = TEXTS[int(text_number)]
+for i, slovo in enumerate(chosen_text):
+ chosen_text_modif=[slovo.strip(",.!?)(") for slovo in chosen_text.split(" ")]
 
 word_count = len(chosen_text_modif)
 
 # velka a malá písmena - vytvořené nové listy
-begin_cap_letters = []
+begin_cap_letters = [slovo for slovo in chosen_text_modif if slovo.istitle()]
+all_small=[slovo for slovo in chosen_text_modif if slovo.islower() and slovo.isalpha()]
+all_big=[slovo for slovo in chosen_text_modif if slovo.isupper() and slovo.isalpha()]
+graf = [len(slovo) for slovo in chosen_text_modif if len(slovo) > 0]
 
-while chosen_text_modif:
-    chosen_text_word = chosen_text_modif.pop(0)
-    if chosen_text_word.istitle():
-        begin_cap_letters.append(chosen_text_word)
+frequency = dict()
 
-# obsahuje jen velká nebo jen malá písmena
-chosen_text = TEXTS[int(text_number)].split(" ")
-chosen_text_modif=[]
+for number in graf:
+  frequency[int(number)]=frequency.setdefault(int(number), 0)+ 1
 
-for slovo in chosen_text:
-    chosen_text_modif.append(slovo.strip(".,"))
-
-all_small = []
-all_big = []
-
-while chosen_text_modif:
-    chosen_text_word = chosen_text_modif.pop(0)
-    if chosen_text_word.islower() and chosen_text_word.isalpha():
-        all_small.append(chosen_text_word)
-    elif chosen_text_word.isupper() and chosen_text_word.isalpha():
-        all_big.append(chosen_text_word)
+import collections
+sorted_frequency = collections.OrderedDict(sorted(frequency.items()))
 
 ###################################################################
 
@@ -101,75 +89,50 @@ numbers=[int(item) for item in TEXTS[int(text_number)].split() if item.isdigit()
 
 # PRINTS
 # wordcount je už len, takže ok
-print("There are ", word_count, "words  in selected text.")
+print(f"There are {word_count} words  in selected text.")
 
 # slova zacínající velkým písmenem:
 if len(begin_cap_letters) > 1:
-    print("There are ", len(begin_cap_letters), " titlecase words.")
+    print(f"There are {len(begin_cap_letters)} titlecase words.")
 elif len(begin_cap_letters) == 1:
-    print("There is ", len(begin_cap_letters), " titlecase words.")
+    print(f"There is {len(begin_cap_letters)} titlecase words.")
 else:
     print("There is not any titilecase word.")
 
 # slova obsahující jen velká písmena:
 if len(all_big) > 1:
-    print("There are ", len(all_big), " uppercase words.")
+    print(f"There are {len(all_big)} uppercase words.")
 elif len(all_big) == 1:
-    print("There is ", len(all_big), " uppercase words.")
+    print(f"There is {len(all_big)} uppercase words.")
 else:
     print("There is not any uppercase word.")
 
 # slova obsahující jen malá písmea:
 if len(all_small) > 1:
-    print("There are ", len(all_small), " lowercase words.")
+    print(f"There are  {len(all_small)} lowercase words.")
 elif len(all_small) == 1:
-    print("There is ", len(all_small), " lowercase words.")
+    print(f"There is  {len(all_small)} lowercase words.")
 else:
-    print("There is not any lowercase word.")
+    print("There are not any lowercase words.")
 
 # Numerci string - ne poče číslic
 if len(numbers) > 1:
-    print("There are ", len(numbers), " numeric strings.")
+    print(f"There are  {len(numbers)} numeric strings.")
 elif len(numbers) == 1:
-    print("There is ", len(numbers), " numeric string.")
+    print(f"There is {len(numbers)} numeric string.")
 else:
     print("There is not any numeric string in selected text.")
 
 print()
-print(oddelovac)
+print(ODDELOVAC)
 print()
-
-# cetnost
-chosen_text = TEXTS[int(text_number)].split(" ")
-chosen_text_modif=[]
-
-for slovo in chosen_text:
-    chosen_text_modif.append(slovo.strip(".,"))
-
-#list, kde jsou délky slov, všech
-graf = []
-
-for slovo in chosen_text_modif:
-    if len(slovo) > 0:
-        graf.append(len(slovo))
-
-# slovnik pro vypsaní frekvencí výskytu delky slova:
-frequency = dict()
-
-for number in graf:
-  frequency[int(number)]=frequency.setdefault(int(number), 0)+ 1
-
-
-#sorting
-import collections
-sorted_frequency = collections.OrderedDict(sorted(frequency.items()))
 
 for i in sorted_frequency:
    print(i,sorted_frequency.get(i)*"*",sorted_frequency.get(i))
 
 #konečný print
 print()
-print("If we summed all the numbers in this text we would get:",sum(numbers))
+print(f"If we summed all the numbers in this text we would get: {sum(numbers)}")
 
 
 
